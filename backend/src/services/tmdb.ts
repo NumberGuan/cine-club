@@ -1,4 +1,5 @@
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+const TMDB_TIMEOUT_MS = 10_000;
 
 interface TmdbSearchResponse {
   results?: TmdbMovie[];
@@ -78,7 +79,7 @@ async function requestTmdb<T>(path: string, params: Record<string, string>): Pro
   let response: Response;
 
   try {
-    response = await fetch(url);
+    response = await fetch(url, { signal: AbortSignal.timeout(TMDB_TIMEOUT_MS) });
   } catch {
     throw new TmdbRequestError();
   }
