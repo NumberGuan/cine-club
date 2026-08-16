@@ -66,7 +66,9 @@ export function MovieDetail({
         <Poster path={movie.posterPath} title={movie.title} eager />
 
         <div className="detail-copy">
-          <p className="section-kicker">Ficha de película</p>
+          <div className="kicker-badge kicker-badge-coral">
+            <span>✦</span> Ficha de película
+          </div>
           <h1 id="movie-detail-title">{movie.title}</h1>
           <div className="detail-meta" aria-label="Datos de la película">
             {movie.year && <span>{movie.year}</span>}
@@ -85,7 +87,7 @@ export function MovieDetail({
               <strong>{hasReviews ? movie.avgScore.toFixed(1) : '—'}</strong>
               <span className="rating-out-of">/ 5</span>
             </div>
-            <span>
+            <span className="rating-count">
               {hasReviews
                 ? `${movie.reviews.length} ${movie.reviews.length === 1 ? 'reseña' : 'reseñas'}`
                 : 'Sin reseñas todavía'}
@@ -97,7 +99,9 @@ export function MovieDetail({
       <section className="reviews-section" aria-labelledby="reviews-title">
         <div className="section-heading">
           <div>
-            <p className="section-kicker">La conversación</p>
+            <div className="kicker-badge kicker-badge-mint">
+              <span>✦</span> La conversación
+            </div>
             <h2 id="reviews-title">Reseñas</h2>
           </div>
           <span className="section-count">{movie.reviews.length}</span>

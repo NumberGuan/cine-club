@@ -36,14 +36,17 @@ export function ReviewList({
               </span>
             </header>
             <p>{review.comment}</p>
-            <button
-              className="button button-text review-delete"
-              type="button"
-              onClick={() => onDelete(review.id)}
-              disabled={deletingReviewId === review.id}
-            >
-              {deletingReviewId === review.id ? 'Eliminando…' : 'Eliminar reseña'}
-            </button>
+            <div className="review-footer">
+              <button
+                className="button button-text review-delete"
+                type="button"
+                onClick={() => onDelete(review.id)}
+                disabled={deletingReviewId === review.id}
+                aria-label={`Eliminar reseña de ${review.author}`}
+              >
+                {deletingReviewId === review.id ? 'Eliminando…' : '✕ Eliminar reseña'}
+              </button>
+            </div>
           </article>
         </li>
       ))}

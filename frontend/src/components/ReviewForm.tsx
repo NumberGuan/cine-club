@@ -60,7 +60,9 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
     <form className="review-form" onSubmit={handleSubmit} noValidate>
       <div className="form-heading">
         <div>
-          <p className="section-kicker">Tu turno</p>
+          <div className="kicker-badge kicker-badge-yellow">
+            <span>✦</span> Tu turno
+          </div>
           <h3>Dejá tu reseña</h3>
         </div>
         <span className="required-note">Todos los campos son obligatorios</span>
