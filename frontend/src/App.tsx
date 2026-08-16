@@ -65,6 +65,7 @@ function App() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const shouldRestoreSearchFocus = useRef(false);
+  const reviewMutationInFlight = useRef(false);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState<MovieSummary[]>([]);
@@ -87,6 +88,19 @@ function App() {
 
     backButtonRef.current?.focus();
   }, [selectedMovieId, isLoadingMovie]);
+
+  async function runReviewMutation<T>(mutation: () => Promise<T>): Promise<T> {
+    if (reviewMutationInFlight.current) {
+      throw new Error('Esperá a que termine la otra operación de reseña.');
+    }
+
+    reviewMutationInFlight.current = true;
+    try {
+      return await mutation();
+    } finally {
+      reviewMutationInFlight.current = false;
+    }
+  }
 
   async function handleSearch() {
     const trimmedQuery = query.trim();
@@ -163,7 +177,7 @@ function App() {
     const movieId = selectedMovieId;
     const movieAtStart = movie?.id === movieId ? movie : null;
     const navigationId = activeMovieRequest.current;
-    const review = await createReview(movieId, draft);
+    const review = await runReviewMutation(() => createReview(movieId, draft));
 
     if (movieAtStart) {
       const reviews = movieAtStart.reviews.some(
@@ -201,7 +215,7 @@ function App() {
     const movieId = selectedMovieId;
     const movieAtStart = movie?.id === movieId ? movie : null;
     const navigationId = activeMovieRequest.current;
-    await deleteReview(reviewId);
+    await runReviewMutation(() => deleteReview(reviewId));
 
     if (movieAtStart) {
       const updatedMovie = withReviews(
