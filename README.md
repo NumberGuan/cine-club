@@ -25,7 +25,7 @@ backend, de manera intencional.
 - Vite
 - TypeScript
 - CSS
-- Motion para microinteracciones puntuales
+- Transiciones CSS para microinteracciones puntuales
 
 ### Backend
 
