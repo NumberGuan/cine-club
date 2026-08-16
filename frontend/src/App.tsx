@@ -161,8 +161,25 @@ function App() {
   async function handleCreateReview(draft: ReviewDraft) {
     if (selectedMovieId === null) return;
     const movieId = selectedMovieId;
+    const movieAtStart = movie?.id === movieId ? movie : null;
     const navigationId = activeMovieRequest.current;
     const review = await createReview(movieId, draft);
+
+    if (movieAtStart) {
+      const reviews = movieAtStart.reviews.some(
+        (currentReview) => currentReview.id === review.id,
+      )
+        ? movieAtStart.reviews
+        : [...movieAtStart.reviews, review];
+      const updatedMovie = withReviews(movieAtStart, reviews);
+      setMovies((currentMovies) =>
+        currentMovies.map((currentMovie) =>
+          currentMovie.id === movieId
+            ? { ...currentMovie, avgScore: updatedMovie.avgScore }
+            : currentMovie,
+        ),
+      );
+    }
 
     if (navigationId !== activeMovieRequest.current) return;
 
@@ -182,8 +199,23 @@ function App() {
   async function handleDeleteReview(reviewId: number) {
     if (selectedMovieId === null) return;
     const movieId = selectedMovieId;
+    const movieAtStart = movie?.id === movieId ? movie : null;
     const navigationId = activeMovieRequest.current;
     await deleteReview(reviewId);
+
+    if (movieAtStart) {
+      const updatedMovie = withReviews(
+        movieAtStart,
+        movieAtStart.reviews.filter((review) => review.id !== reviewId),
+      );
+      setMovies((currentMovies) =>
+        currentMovies.map((currentMovie) =>
+          currentMovie.id === movieId
+            ? { ...currentMovie, avgScore: updatedMovie.avgScore }
+            : currentMovie,
+        ),
+      );
+    }
 
     if (navigationId !== activeMovieRequest.current) return;
 
