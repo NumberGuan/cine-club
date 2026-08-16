@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { MovieDetail } from './components/MovieDetail';
 import { MovieGrid } from './components/MovieGrid';
 import { SearchBar } from './components/SearchBar';
+import { StickyShowcase } from './components/StickyShowcase';
 import { createReview, deleteReview, getMovie, searchMovies } from './services/api';
 import type { Movie, MovieSummary, Review, ReviewDraft } from './types';
 
@@ -33,13 +34,13 @@ function EmptyState({ searched }: { searched: boolean }) {
   return (
     <div className="state-card empty-state" role="status">
       <span className="state-mark" aria-hidden="true">
-        ◌
+        {searched ? '✕' : '✦'}
       </span>
       <h2>{searched ? 'No encontramos esa película' : 'Empezá por una búsqueda'}</h2>
       <p>
         {searched
-          ? 'Probá con otro título, una palabra más corta o el nombre original.'
-          : 'Explorá el catálogo de TMDB y encontrá una historia para esta noche.'}
+          ? 'Probá con otro título, una palabra más corta o el nombre original en TMDB.'
+          : 'Explorá el catálogo global de películas y compartí tu propia crítica.'}
       </p>
     </div>
   );
@@ -53,8 +54,8 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
       </span>
       <h2>Algo salió mal</h2>
       <p>{message}</p>
-      <button className="button button-secondary" type="button" onClick={onRetry}>
-        Intentar de nuevo
+      <button className="button button-danger" type="button" onClick={onRetry}>
+        Intentar nuevamente
       </button>
     </div>
   );
@@ -267,15 +268,25 @@ function App() {
 
   return (
     <div className="app-shell">
+      <div className="top-ticker" aria-hidden="true">
+        <div className="container ticker-track">
+          <span>★ CINECLUB · EDICIÓN 2026</span>
+          <span>BÚSQUEDA TMDB EN TIEMPO REAL</span>
+          <span>RESEÑAS EN MEMORIA ★</span>
+        </div>
+      </div>
+
       <header className="site-header">
         <div className="container header-inner">
           <p className="brand" aria-label="CineClub">
             <span className="brand-mark" aria-hidden="true">
-              C
+              CC
             </span>
             CineClub
           </p>
-          <p className="header-note">Historias para compartir</p>
+          <div className="header-tagline">
+            <span>✦</span> Historias para compartir
+          </div>
         </div>
       </header>
 
@@ -283,12 +294,15 @@ function App() {
         {selectedMovieId === null ? (
           <>
             <section className="search-hero" aria-labelledby="search-title">
-              <p className="eyebrow">Tu próxima película</p>
-              <h1 id="search-title">Buscá algo que<br />
+              <div className="kicker-badge kicker-badge-yellow">
+                <span>✦</span> Buscador de Cine
+              </div>
+              <h1 id="search-title">
+                Buscá algo que<br />
                 <em>te mueva.</em>
               </h1>
               <p className="hero-description">
-                Explorá películas, conocé sus historias y dejá una reseña para la próxima persona cinéfila.
+                Explorá películas del catálogo global de TMDB, conocé sus historias y compartí tu reseña con la comunidad cinéfila.
               </p>
               <SearchBar
                 inputRef={searchInputRef}
@@ -299,10 +313,14 @@ function App() {
               />
             </section>
 
+            <StickyShowcase />
+
             <section className="results-section" aria-labelledby="results-title">
               <div className="section-heading results-heading">
                 <div>
-                  <p className="section-kicker">Explorar</p>
+                  <div className="kicker-badge kicker-badge-mint">
+                    <span>✦</span> Catálogo TMDB
+                  </div>
                   <h2 id="results-title">
                     {hasSearched ? 'Resultados' : 'Películas a tu manera'}
                   </h2>
@@ -311,7 +329,7 @@ function App() {
               </div>
 
               {isSearching ? (
-                <LoadingState label="Buscando en el catálogo…" />
+                <LoadingState label="Buscando en el catálogo de TMDB…" />
               ) : searchError ? (
                 <ErrorState message={searchError} onRetry={handleSearch} />
               ) : movies.length > 0 ? (
@@ -341,7 +359,7 @@ function App() {
       <footer className="site-footer">
         <div className="container footer-inner">
           <span>CineClub</span>
-          <span>Datos de películas provistos por TMDB</span>
+          <span>Datos provistos por TMDB · Reseñas almacenadas en memoria</span>
         </div>
       </footer>
     </div>
