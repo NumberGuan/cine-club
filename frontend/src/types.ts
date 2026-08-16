@@ -4,7 +4,7 @@ export interface MovieSummary {
   year: number | null;
   overview: string;
   posterPath: string | null;
-  avgScore: number | null;
+  avgScore: number;
 }
 
 export interface Review {
@@ -13,7 +13,6 @@ export interface Review {
   author: string;
   score: number;
   comment: string;
-  createdAt?: string | null;
 }
 
 export interface Movie extends MovieSummary {
@@ -30,12 +29,4 @@ export interface ReviewDraft {
 
 export interface SearchResponse {
   movies: MovieSummary[];
-}
-
-export interface MovieResponse {
-  movie: Movie;
-}
-
-export interface ReviewResponse {
-  review: Review;
 }

@@ -6,16 +6,6 @@ interface ReviewListProps {
   onDelete: (reviewId: number) => void;
 }
 
-function reviewDate(value: string | null | undefined): string {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-
-  return new Intl.DateTimeFormat('es-AR', {
-    dateStyle: 'medium',
-  }).format(date);
-}
-
 export function ReviewList({
   reviews,
   deletingReviewId,
@@ -37,11 +27,6 @@ export function ReviewList({
             <header className="review-header">
               <div>
                 <h3>{review.author}</h3>
-                {reviewDate(review.createdAt) && review.createdAt && (
-                  <time dateTime={review.createdAt}>
-                    {reviewDate(review.createdAt)}
-                  </time>
-                )}
               </div>
               <span
                 className="review-rating"
