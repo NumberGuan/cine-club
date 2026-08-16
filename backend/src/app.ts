@@ -3,6 +3,7 @@ import cors from "cors";
 import express, { type ErrorRequestHandler } from "express";
 import morgan from "morgan";
 import { moviesRouter } from "./routes/movies.js";
+import { reviewsRouter } from "./routes/reviews.js";
 import {
   TmdbConfigError,
   TmdbNotFoundError,
@@ -20,6 +21,7 @@ app.get("/api/health", (_request, response) => {
 });
 
 app.use("/api/movies", moviesRouter);
+app.use("/api", reviewsRouter);
 
 app.use((_request, response) => {
   response.status(404).json({ error: "Ruta no encontrada." });
