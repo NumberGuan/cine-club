@@ -4,10 +4,20 @@ import { MovieDetail } from './components/MovieDetail';
 import { MovieGrid } from './components/MovieGrid';
 import { SearchBar } from './components/SearchBar';
 import { createReview, deleteReview, getMovie, searchMovies } from './services/api';
-import type { Movie, MovieSummary, ReviewDraft } from './types';
+import type { Movie, MovieSummary, Review, ReviewDraft } from './types';
 
 function messageFor(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
+}
+
+function withReviews(movie: Movie, reviews: Review[]): Movie {
+  const avgScore = reviews.length
+    ? Number(
+        (reviews.reduce((total, review) => total + review.score, 0) / reviews.length).toFixed(1),
+      )
+    : 0;
+
+  return { ...movie, reviews, avgScore };
 }
 
 function LoadingState({ label }: { label: string }) {
@@ -123,21 +133,30 @@ function App() {
     setIsLoadingMovie(false);
   }
 
-  async function refreshMovie(movieId: number) {
-    setMovie(await getMovie(movieId));
-  }
-
   async function handleCreateReview(draft: ReviewDraft) {
     if (selectedMovieId === null) return;
-    await createReview(selectedMovieId, draft);
-    await refreshMovie(selectedMovieId);
+    const movieId = selectedMovieId;
+    const review = await createReview(movieId, draft);
+    setMovie((currentMovie) =>
+      currentMovie?.id === movieId
+        ? withReviews(currentMovie, [...currentMovie.reviews, review])
+        : currentMovie,
+    );
     setReviewNotice('Tu reseña se publicó correctamente.');
   }
 
   async function handleDeleteReview(reviewId: number) {
     if (selectedMovieId === null) return;
+    const movieId = selectedMovieId;
     await deleteReview(reviewId);
-    await refreshMovie(selectedMovieId);
+    setMovie((currentMovie) =>
+      currentMovie?.id === movieId
+        ? withReviews(
+            currentMovie,
+            currentMovie.reviews.filter((review) => review.id !== reviewId),
+          )
+        : currentMovie,
+    );
     setReviewNotice('La reseña se eliminó correctamente.');
   }
 
