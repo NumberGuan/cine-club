@@ -82,3 +82,32 @@ npm run dev
 ```
 
 Después abrí la dirección local que muestra Vite en la terminal.
+
+## Flujo de datos
+
+```text
+React → Express → TMDB
+              ↘ reseñas en memoria
+```
+
+El frontend nunca accede directamente a TMDB. Todas las búsquedas pasan por
+Express, por lo que la API key permanece únicamente en el backend.
+
+## Endpoints
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| `GET` | `/api/movies/search?q=matrix` | Busca películas en TMDB |
+| `GET` | `/api/movies/:tmdbId` | Obtiene el detalle y las reseñas locales |
+| `POST` | `/api/movies/:tmdbId/reviews` | Agrega una reseña en memoria |
+| `DELETE` | `/api/reviews/:reviewId` | Elimina una reseña local |
+
+## Cómo se conectan las pantallas
+
+La búsqueda empieza en `SearchBar`, llama a `searchMovies()` y muestra la
+respuesta del backend mediante `MovieGrid`. Al elegir una tarjeta, `App` guarda
+su identificador en `selectedMovieId` y renderiza `MovieDetail`.
+
+El formulario de reseñas envía un `POST` al backend. Express valida los datos,
+agrega la reseña al array en memoria y el frontend vuelve a cargar el detalle
+para mostrar la lista y el promedio actualizados.
