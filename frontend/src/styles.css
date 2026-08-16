@@ -597,10 +597,12 @@ h3 {
 }
 
 .review-header h3 {
+  min-width: 0;
   margin-bottom: 0;
   font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .review-rating {
@@ -616,6 +618,7 @@ h3 {
   color: #514b45;
   font-size: 0.92rem;
   line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
 .review-delete {
