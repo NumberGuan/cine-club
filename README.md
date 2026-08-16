@@ -33,3 +33,52 @@ backend, de manera intencional.
 - Express
 - TypeScript
 - API de TMDB
+
+## Requisitos
+
+- Node.js 20 o una versión más reciente
+- npm
+- Una API key de [TMDB](https://www.themoviedb.org/settings/api)
+
+## Backend
+
+```bash
+cd backend
+npm install
+```
+
+Creá un archivo `backend/.env` a partir de `.env.example`:
+
+```env
+TMDB_API_KEY=tu_api_key
+PORT=3001
+```
+
+Iniciá el servidor:
+
+```bash
+npm run dev
+```
+
+## Frontend
+
+En otra terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+Creá un archivo `frontend/.env` a partir de `.env.example`:
+
+```env
+VITE_API_URL=http://localhost:3001
+```
+
+Iniciá la aplicación:
+
+```bash
+npm run dev
+```
+
+Después abrí la dirección local que muestra Vite en la terminal.
