@@ -14,14 +14,17 @@ reviewsRouter.post("/movies/:tmdbId/reviews", (request, response) => {
     !Number.isSafeInteger(tmdbId) ||
     tmdbId <= 0 ||
     !author ||
+    author.length > 80 ||
     !comment ||
+    comment.length > 1_000 ||
     typeof score !== "number" ||
     !Number.isFinite(score) ||
     score < 1 ||
     score > 5
   ) {
     response.status(400).json({
-      error: "tmdbId, author, comment y un score numérico entre 1 y 5 son obligatorios.",
+      error:
+        "tmdbId, author (máximo 80 caracteres), comment (máximo 1000) y un score numérico entre 1 y 5 son obligatorios.",
     });
     return;
   }
