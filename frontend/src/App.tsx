@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { MovieDetail } from './components/MovieDetail';
 import { MovieGrid } from './components/MovieGrid';
@@ -51,6 +51,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 }
 
 function App() {
+  const activeMovieRequest = useRef(0);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState<MovieSummary[]>([]);
@@ -87,6 +88,8 @@ function App() {
   }
 
   async function loadMovie(movieId: number) {
+    const requestId = activeMovieRequest.current + 1;
+    activeMovieRequest.current = requestId;
     setSelectedMovieId(movieId);
     setMovie(null);
     setMovieError('');
@@ -94,21 +97,30 @@ function App() {
     setIsLoadingMovie(true);
 
     try {
-      setMovie(await getMovie(movieId));
+      const loadedMovie = await getMovie(movieId);
+      if (requestId === activeMovieRequest.current) {
+        setMovie(loadedMovie);
+      }
     } catch (error) {
-      setMovieError(
-        messageFor(error, 'No pudimos cargar esta película. Intentá nuevamente.'),
-      );
+      if (requestId === activeMovieRequest.current) {
+        setMovieError(
+          messageFor(error, 'No pudimos cargar esta película. Intentá nuevamente.'),
+        );
+      }
     } finally {
-      setIsLoadingMovie(false);
+      if (requestId === activeMovieRequest.current) {
+        setIsLoadingMovie(false);
+      }
     }
   }
 
   function handleBack() {
+    activeMovieRequest.current += 1;
     setSelectedMovieId(null);
     setMovie(null);
     setMovieError('');
     setReviewNotice('');
+    setIsLoadingMovie(false);
   }
 
   async function refreshMovie(movieId: number) {
