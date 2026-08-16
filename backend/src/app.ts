@@ -27,7 +27,30 @@ app.use((_request, response) => {
   response.status(404).json({ error: "Ruta no encontrada." });
 });
 
+function getJsonBodyError(error: unknown): { statusCode: 400 | 413; message: string } | null {
+  if (typeof error !== "object" || error === null || !("type" in error)) {
+    return null;
+  }
+
+  if (error.type === "entity.parse.failed") {
+    return { statusCode: 400, message: "El cuerpo JSON no es válido." };
+  }
+
+  if (error.type === "entity.too.large") {
+    return { statusCode: 413, message: "El cuerpo de la solicitud es demasiado grande." };
+  }
+
+  return null;
+}
+
 const errorHandler: ErrorRequestHandler = (error, _request, response, _next) => {
+  const jsonBodyError = getJsonBodyError(error);
+
+  if (jsonBodyError) {
+    response.status(jsonBodyError.statusCode).json({ error: jsonBodyError.message });
+    return;
+  }
+
   if (
     error instanceof TmdbConfigError ||
     error instanceof TmdbNotFoundError ||
