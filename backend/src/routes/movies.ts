@@ -13,6 +13,11 @@ moviesRouter.get("/search", async (request, response, next) => {
     return;
   }
 
+  if (query.length > 120) {
+    response.status(400).json({ error: "La búsqueda admite hasta 120 caracteres." });
+    return;
+  }
+
   try {
     const movies = await searchMovies(query);
     response.json({
