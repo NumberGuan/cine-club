@@ -2,6 +2,7 @@ import "dotenv/config";
 import cors from "cors";
 import express, { type ErrorRequestHandler } from "express";
 import morgan from "morgan";
+import { moviesRouter } from "./routes/movies.js";
 import {
   TmdbConfigError,
   TmdbNotFoundError,
@@ -17,6 +18,8 @@ app.use(morgan("dev"));
 app.get("/api/health", (_request, response) => {
   response.json({ ok: true });
 });
+
+app.use("/api/movies", moviesRouter);
 
 app.use((_request, response) => {
   response.status(404).json({ error: "Ruta no encontrada." });
