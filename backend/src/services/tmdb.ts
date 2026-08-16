@@ -126,6 +126,15 @@ function isTmdbMovie(value: unknown): value is TmdbMovie {
   );
 }
 
+function isTmdbGenre(value: unknown): value is { id: number; name: string } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { id?: unknown }).id === "number" &&
+    typeof (value as { name?: unknown }).name === "string"
+  );
+}
+
 export async function searchMovies(query: string): Promise<MovieSummary[]> {
   const payload = await requestTmdb<unknown>("/search/movie", {
     query,
@@ -147,7 +156,11 @@ export async function searchMovies(query: string): Promise<MovieSummary[]> {
 export async function getMovieDetails(tmdbId: number): Promise<MovieDetails> {
   const movie = await requestTmdb<unknown>(`/movie/${tmdbId}`, {});
 
-  if (!isTmdbMovie(movie)) {
+  if (
+    !isTmdbMovie(movie) ||
+    (movie.genres !== undefined &&
+      (!Array.isArray(movie.genres) || !movie.genres.every(isTmdbGenre)))
+  ) {
     throw new TmdbRequestError();
   }
 
