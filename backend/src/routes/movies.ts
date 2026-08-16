@@ -36,12 +36,12 @@ moviesRouter.get("/:tmdbId", async (request, response, next) => {
 
   try {
     const movie = await getMovieDetails(tmdbId);
-    const reviews = listReviews(tmdbId).map(({ id, author, score, comment, createdAt }) => ({
+    const reviews = listReviews(tmdbId).map(({ id, tmdbId: reviewMovieId, author, score, comment }) => ({
       id,
+      tmdbId: reviewMovieId,
       author,
       score,
       comment,
-      createdAt,
     }));
 
     response.json({

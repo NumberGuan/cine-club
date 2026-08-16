@@ -4,7 +4,6 @@ export interface Review {
   author: string;
   score: number;
   comment: string;
-  createdAt: string;
 }
 
 interface NewReview {
@@ -41,7 +40,6 @@ export function createReview(input: NewReview): Review {
     author: input.author,
     score: input.score,
     comment: input.comment,
-    createdAt: new Date().toISOString(),
   };
 
   nextReviewId += 1;
