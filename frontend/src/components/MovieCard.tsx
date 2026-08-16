@@ -6,8 +6,8 @@ interface MovieCardProps {
   onSelect: (movieId: number) => void;
 }
 
-function releaseYear(date: string | null): string {
-  return date?.slice(0, 4) || 'Año desconocido';
+function releaseYear(year: number | null): string {
+  return year ? String(year) : 'Año desconocido';
 }
 
 export function MovieCard({ movie, onSelect }: MovieCardProps) {
@@ -22,7 +22,7 @@ export function MovieCard({ movie, onSelect }: MovieCardProps) {
         <Poster path={movie.posterPath} title={movie.title} />
         <span className="movie-card-copy">
           <span className="movie-card-title">{movie.title}</span>
-          <span className="movie-card-year">{releaseYear(movie.releaseDate)}</span>
+          <span className="movie-card-year">{releaseYear(movie.year)}</span>
         </span>
       </button>
     </li>

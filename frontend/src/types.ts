@@ -1,31 +1,30 @@
 export interface MovieSummary {
   id: number;
   title: string;
+  year: number | null;
   overview: string;
   posterPath: string | null;
-  releaseDate: string | null;
+  avgScore: number | null;
 }
 
 export interface Review {
   id: number;
-  movieId: number;
-  name: string;
-  rating: number;
+  tmdbId: number;
+  author: string;
+  score: number;
   comment: string;
-  createdAt: string;
+  createdAt?: string | null;
 }
 
 export interface Movie extends MovieSummary {
   runtime: number | null;
   genres: string[];
-  voteAverage: number | null;
   reviews: Review[];
-  averageRating: number | null;
 }
 
 export interface ReviewDraft {
-  name: string;
-  rating: number;
+  author: string;
+  score: number;
   comment: string;
 }
 
