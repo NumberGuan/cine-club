@@ -118,21 +118,42 @@ function toMovieSummary(movie: TmdbMovie): MovieSummary {
   };
 }
 
+function isTmdbMovie(value: unknown): value is TmdbMovie {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { id?: unknown }).id === "number"
+  );
+}
+
 export async function searchMovies(query: string): Promise<MovieSummary[]> {
-  const payload = await requestTmdb<TmdbSearchResponse>("/search/movie", {
+  const payload = await requestTmdb<unknown>("/search/movie", {
     query,
     include_adult: "false",
   });
 
-  return (payload.results ?? []).map(toMovieSummary);
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    !Array.isArray((payload as TmdbSearchResponse).results) ||
+    !(payload as TmdbSearchResponse).results?.every(isTmdbMovie)
+  ) {
+    throw new TmdbRequestError();
+  }
+
+  return (payload as TmdbSearchResponse).results!.map(toMovieSummary);
 }
 
 export async function getMovieDetails(tmdbId: number): Promise<MovieDetails> {
-  const movie = await requestTmdb<TmdbMovie>(`/movie/${tmdbId}`, {});
+  const movie = await requestTmdb<unknown>(`/movie/${tmdbId}`, {});
+
+  if (!isTmdbMovie(movie)) {
+    throw new TmdbRequestError();
+  }
 
   return {
     ...toMovieSummary(movie),
     runtime: movie.runtime ?? null,
-    genres: (movie.genres ?? []).map((genre) => genre.name),
+    genres: Array.isArray(movie.genres) ? movie.genres.map((genre) => genre.name) : [],
   };
 }
