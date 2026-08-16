@@ -142,6 +142,15 @@ function App() {
   function handleBack() {
     activeMovieRequest.current += 1;
     shouldRestoreSearchFocus.current = true;
+    if (movie) {
+      setMovies((currentMovies) =>
+        currentMovies.map((currentMovie) =>
+          currentMovie.id === movie.id
+            ? { ...currentMovie, avgScore: movie.avgScore }
+            : currentMovie,
+        ),
+      );
+    }
     setSelectedMovieId(null);
     setMovie(null);
     setMovieError('');
@@ -152,10 +161,19 @@ function App() {
   async function handleCreateReview(draft: ReviewDraft) {
     if (selectedMovieId === null) return;
     const movieId = selectedMovieId;
+    const navigationId = activeMovieRequest.current;
     const review = await createReview(movieId, draft);
+
+    if (navigationId !== activeMovieRequest.current) return;
+
     setMovie((currentMovie) =>
       currentMovie?.id === movieId
-        ? withReviews(currentMovie, [...currentMovie.reviews, review])
+        ? withReviews(
+            currentMovie,
+            currentMovie.reviews.some((currentReview) => currentReview.id === review.id)
+              ? currentMovie.reviews
+              : [...currentMovie.reviews, review],
+          )
         : currentMovie,
     );
     setReviewNotice('Tu reseña se publicó correctamente.');
@@ -164,7 +182,11 @@ function App() {
   async function handleDeleteReview(reviewId: number) {
     if (selectedMovieId === null) return;
     const movieId = selectedMovieId;
+    const navigationId = activeMovieRequest.current;
     await deleteReview(reviewId);
+
+    if (navigationId !== activeMovieRequest.current) return;
+
     setMovie((currentMovie) =>
       currentMovie?.id === movieId
         ? withReviews(
