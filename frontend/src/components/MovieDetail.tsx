@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import type { RefObject } from 'react';
 import type { Movie, ReviewDraft } from '../types';
 import { Poster } from './Poster';
 import { ReviewForm } from './ReviewForm';
 import { ReviewList } from './ReviewList';
 
 interface MovieDetailProps {
+  backButtonRef: RefObject<HTMLButtonElement | null>;
   movie: Movie;
   onBack: () => void;
   onCreateReview: (draft: ReviewDraft) => Promise<void>;
@@ -25,6 +27,7 @@ function errorMessage(error: unknown): string {
 }
 
 export function MovieDetail({
+  backButtonRef,
   movie,
   onBack,
   onCreateReview,
@@ -50,7 +53,12 @@ export function MovieDetail({
 
   return (
     <article className="movie-detail" aria-labelledby="movie-detail-title">
-      <button className="button button-back" type="button" onClick={onBack}>
+      <button
+        ref={backButtonRef}
+        className="button button-back"
+        type="button"
+        onClick={onBack}
+      >
         <span aria-hidden="true">←</span> Volver a resultados
       </button>
 

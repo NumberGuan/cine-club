@@ -1,6 +1,7 @@
-import type { FormEvent } from 'react';
+import type { FormEvent, RefObject } from 'react';
 
 interface SearchBarProps {
+  inputRef: RefObject<HTMLInputElement | null>;
   value: string;
   loading: boolean;
   onChange: (value: string) => void;
@@ -8,6 +9,7 @@ interface SearchBarProps {
 }
 
 export function SearchBar({
+  inputRef,
   value,
   loading,
   onChange,
@@ -27,6 +29,7 @@ export function SearchBar({
             ⌕
           </span>
           <input
+            ref={inputRef}
             id="movie-search"
             type="search"
             value={value}

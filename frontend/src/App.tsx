@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { MovieDetail } from './components/MovieDetail';
 import { MovieGrid } from './components/MovieGrid';
@@ -62,6 +62,9 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 
 function App() {
   const activeMovieRequest = useRef(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const shouldRestoreSearchFocus = useRef(false);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState<MovieSummary[]>([]);
@@ -72,6 +75,18 @@ function App() {
   const [isLoadingMovie, setIsLoadingMovie] = useState(false);
   const [movieError, setMovieError] = useState('');
   const [reviewNotice, setReviewNotice] = useState('');
+
+  useEffect(() => {
+    if (selectedMovieId === null) {
+      if (shouldRestoreSearchFocus.current) {
+        searchInputRef.current?.focus();
+        shouldRestoreSearchFocus.current = false;
+      }
+      return;
+    }
+
+    backButtonRef.current?.focus();
+  }, [selectedMovieId, isLoadingMovie]);
 
   async function handleSearch() {
     const trimmedQuery = query.trim();
@@ -126,6 +141,7 @@ function App() {
 
   function handleBack() {
     activeMovieRequest.current += 1;
+    shouldRestoreSearchFocus.current = true;
     setSelectedMovieId(null);
     setMovie(null);
     setMovieError('');
@@ -172,6 +188,7 @@ function App() {
         </p>
       )}
       <MovieDetail
+        backButtonRef={backButtonRef}
         movie={movie}
         onBack={handleBack}
         onCreateReview={handleCreateReview}
@@ -206,6 +223,7 @@ function App() {
                 Explorá películas, conocé sus historias y dejá una reseña para la próxima persona cinéfila.
               </p>
               <SearchBar
+                inputRef={searchInputRef}
                 value={query}
                 loading={isSearching}
                 onChange={setQuery}
@@ -238,7 +256,12 @@ function App() {
         ) : (
           <section className="detail-section" aria-label="Detalle de película">
             {(isLoadingMovie || movieError) && (
-              <button className="button button-back" type="button" onClick={handleBack}>
+              <button
+                ref={backButtonRef}
+                className="button button-back"
+                type="button"
+                onClick={handleBack}
+              >
                 <span aria-hidden="true">←</span> Volver a resultados
               </button>
             )}
