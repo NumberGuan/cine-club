@@ -69,6 +69,11 @@ export async function searchMovies(query: string): Promise<MovieSummary[]> {
   return movies;
 }
 
+export async function getTrendingMovies(): Promise<MovieSummary[]> {
+  const { movies } = await request<SearchResponse>('/movies/featured/trending');
+  return movies;
+}
+
 export function getMovie(movieId: number): Promise<Movie> {
   return request<Movie>(`/movies/${movieId}`);
 }

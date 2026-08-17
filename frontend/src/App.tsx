@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { HeroCarousel } from './components/HeroCarousel';
 import { MovieDetail } from './components/MovieDetail';
 import { MovieGrid } from './components/MovieGrid';
-import { SearchBar } from './components/SearchBar';
 import { StickyShowcase } from './components/StickyShowcase';
-import { createReview, deleteReview, getMovie, searchMovies } from './services/api';
+import {
+  createReview,
+  deleteReview,
+  getMovie,
+  getTrendingMovies,
+  searchMovies,
+} from './services/api';
 import type { Movie, MovieSummary, Review, ReviewDraft } from './types';
 
 function messageFor(error: unknown, fallback: string): string {
@@ -70,6 +76,7 @@ function App() {
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState<MovieSummary[]>([]);
+  const [trendingMovies, setTrendingMovies] = useState<MovieSummary[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState('');
@@ -77,6 +84,23 @@ function App() {
   const [isLoadingMovie, setIsLoadingMovie] = useState(false);
   const [movieError, setMovieError] = useState('');
   const [reviewNotice, setReviewNotice] = useState('');
+
+  // Fetch trending movies on mount for the hero carousel
+  useEffect(() => {
+    let isMounted = true;
+    getTrendingMovies()
+      .then((trending) => {
+        if (isMounted) {
+          setTrendingMovies(trending);
+        }
+      })
+      .catch(() => {
+        // Fallback silently if trending is unavailable
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedMovieId === null) {
@@ -282,7 +306,7 @@ function App() {
             <span className="brand-mark" aria-hidden="true">
               CC
             </span>
-            CineClub
+            <span className="brand-text">CineClub</span>
           </p>
           <div className="header-tagline">
             <span>✦</span> Historias para compartir
@@ -293,25 +317,15 @@ function App() {
       <main className="container main-content">
         {selectedMovieId === null ? (
           <>
-            <section className="search-hero" aria-labelledby="search-title">
-              <div className="kicker-badge kicker-badge-yellow">
-                <span>✦</span> Buscador de Cine
-              </div>
-              <h1 id="search-title">
-                Buscá algo que<br />
-                <em>te mueva.</em>
-              </h1>
-              <p className="hero-description">
-                Explorá películas del catálogo global de TMDB, conocé sus historias y compartí tu reseña con la comunidad cinéfila.
-              </p>
-              <SearchBar
-                inputRef={searchInputRef}
-                value={query}
-                loading={isSearching}
-                onChange={setQuery}
-                onSubmit={handleSearch}
-              />
-            </section>
+            <HeroCarousel
+              searchInputRef={searchInputRef}
+              query={query}
+              isSearching={isSearching}
+              onQueryChange={setQuery}
+              onSearch={handleSearch}
+              trendingMovies={trendingMovies}
+              onSelectMovie={loadMovie}
+            />
 
             <StickyShowcase />
 
@@ -358,7 +372,7 @@ function App() {
 
       <footer className="site-footer">
         <div className="container footer-inner">
-          <span>CineClub</span>
+          <span className="footer-brand">CineClub</span>
           <span>Datos provistos por TMDB · Reseñas almacenadas en memoria</span>
         </div>
       </footer>

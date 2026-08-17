@@ -4,6 +4,7 @@ export interface MovieSummary {
   year: number | null;
   overview: string;
   posterPath: string | null;
+  backdropPath?: string | null;
   avgScore: number;
 }
 
