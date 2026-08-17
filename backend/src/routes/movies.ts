@@ -1,8 +1,22 @@
 import { Router } from "express";
 import { getAverageScore, listReviews } from "../data/reviews.js";
-import { getMovieDetails, searchMovies } from "../services/tmdb.js";
+import { getMovieDetails, getTrendingMovies, searchMovies } from "../services/tmdb.js";
 
 export const moviesRouter = Router();
+
+moviesRouter.get("/featured/trending", async (_request, response, next) => {
+  try {
+    const movies = await getTrendingMovies();
+    response.json({
+      movies: movies.map((movie) => ({
+        ...movie,
+        avgScore: getAverageScore(movie.id),
+      })),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 moviesRouter.get("/search", async (request, response, next) => {
   const rawQuery = request.query.q;

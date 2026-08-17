@@ -11,6 +11,7 @@ interface TmdbMovie {
   original_title?: string;
   release_date?: string;
   poster_path?: string | null;
+  backdrop_path?: string | null;
   overview?: string;
   runtime?: number | null;
   genres?: Array<{ id: number; name: string }>;
@@ -21,6 +22,7 @@ export interface MovieSummary {
   title: string;
   year: number | null;
   posterPath: string | null;
+  backdropPath: string | null;
   overview: string;
 }
 
@@ -114,6 +116,7 @@ function toMovieSummary(movie: TmdbMovie): MovieSummary {
     title: movie.title ?? movie.original_title ?? "Sin título",
     year: getYear(movie.release_date),
     posterPath: movie.poster_path ?? null,
+    backdropPath: movie.backdrop_path ?? null,
     overview: movie.overview ?? "",
   };
 }
@@ -140,6 +143,21 @@ export async function searchMovies(query: string): Promise<MovieSummary[]> {
     query,
     include_adult: "false",
   });
+
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    !Array.isArray((payload as TmdbSearchResponse).results) ||
+    !(payload as TmdbSearchResponse).results?.every(isTmdbMovie)
+  ) {
+    throw new TmdbRequestError();
+  }
+
+  return (payload as TmdbSearchResponse).results!.map(toMovieSummary);
+}
+
+export async function getTrendingMovies(): Promise<MovieSummary[]> {
+  const payload = await requestTmdb<unknown>("/trending/movie/day", {});
 
   if (
     typeof payload !== "object" ||
