@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { HeroCarousel } from './components/HeroCarousel';
 import { MovieDetail } from './components/MovieDetail';
 import { MovieGrid } from './components/MovieGrid';
+import { SearchBar } from './components/SearchBar';
 import { StickyShowcase } from './components/StickyShowcase';
 import {
   createReview,
@@ -12,6 +13,8 @@ import {
   searchMovies,
 } from './services/api';
 import type { Movie, MovieSummary, Review, ReviewDraft } from './types';
+
+type AppView = 'home' | 'search' | 'detail';
 
 function messageFor(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
@@ -70,14 +73,19 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 function App() {
   const activeMovieRequest = useRef(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchViewInputRef = useRef<HTMLInputElement>(null);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const shouldRestoreSearchFocus = useRef(false);
   const reviewMutationInFlight = useRef(false);
+
+  // Navegación principal manejada con useState según requisitos del parcial
+  const [view, setView] = useState<AppView>('home');
+  const [previousView, setPreviousView] = useState<'home' | 'search'>('home');
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
+
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState<MovieSummary[]>([]);
   const [trendingMovies, setTrendingMovies] = useState<MovieSummary[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState('');
   const [movie, setMovie] = useState<Movie | null>(null);
@@ -85,7 +93,7 @@ function App() {
   const [movieError, setMovieError] = useState('');
   const [reviewNotice, setReviewNotice] = useState('');
 
-  // Fetch trending movies on mount for the hero carousel
+  // Carga inicial de películas trending para el carrusel
   useEffect(() => {
     let isMounted = true;
     getTrendingMovies()
@@ -95,24 +103,26 @@ function App() {
         }
       })
       .catch(() => {
-        // Fallback silently if trending is unavailable
+        // Fallback silencioso si no hay conexión temporal con TMDB
       });
     return () => {
       isMounted = false;
     };
   }, []);
 
+  // Manejo accesible del foco al cambiar de vista
   useEffect(() => {
-    if (selectedMovieId === null) {
-      if (shouldRestoreSearchFocus.current) {
+    if (view === 'detail') {
+      backButtonRef.current?.focus();
+    } else if (shouldRestoreSearchFocus.current) {
+      if (view === 'search') {
+        searchViewInputRef.current?.focus();
+      } else {
         searchInputRef.current?.focus();
-        shouldRestoreSearchFocus.current = false;
       }
-      return;
+      shouldRestoreSearchFocus.current = false;
     }
-
-    backButtonRef.current?.focus();
-  }, [selectedMovieId, isLoadingMovie]);
+  }, [view, isLoadingMovie]);
 
   async function runReviewMutation<T>(mutation: () => Promise<T>): Promise<T> {
     if (reviewMutationInFlight.current) {
@@ -127,20 +137,22 @@ function App() {
     }
   }
 
-  async function handleSearch() {
-    const trimmedQuery = query.trim();
-    if (!trimmedQuery || isSearching) return;
+  // Ejecuta la búsqueda y cambia a la vista de resultados ('search')
+  async function handleSearch(searchQuery?: string) {
+    const targetQuery = (searchQuery ?? query).trim();
+    if (!targetQuery || isSearching) return;
 
+    setPreviousView('home');
+    setView('search');
     setSelectedMovieId(null);
     setMovie(null);
     setMovieError('');
     setReviewNotice('');
     setSearchError('');
-    setHasSearched(true);
     setIsSearching(true);
 
     try {
-      setMovies(await searchMovies(trimmedQuery));
+      setMovies(await searchMovies(targetQuery));
     } catch (error) {
       setMovies([]);
       setSearchError(
@@ -151,10 +163,14 @@ function App() {
     }
   }
 
-  async function loadMovie(movieId: number) {
+  // Carga el detalle de una película y cambia a la vista de detalle ('detail')
+  async function loadMovie(movieId: number, originView?: 'home' | 'search') {
+    const origin = originView ?? (view === 'search' ? 'search' : 'home');
+    setPreviousView(origin);
     const requestId = activeMovieRequest.current + 1;
     activeMovieRequest.current = requestId;
     setSelectedMovieId(movieId);
+    setView('detail');
     setMovie(null);
     setMovieError('');
     setReviewNotice('');
@@ -178,6 +194,7 @@ function App() {
     }
   }
 
+  // Retorna a la vista anterior preservando el foco
   function handleBack() {
     activeMovieRequest.current += 1;
     shouldRestoreSearchFocus.current = true;
@@ -195,6 +212,17 @@ function App() {
     setMovieError('');
     setReviewNotice('');
     setIsLoadingMovie(false);
+    setView(previousView);
+  }
+
+  function handleGoHome() {
+    activeMovieRequest.current += 1;
+    setSelectedMovieId(null);
+    setMovie(null);
+    setMovieError('');
+    setReviewNotice('');
+    setIsLoadingMovie(false);
+    setView('home');
   }
 
   async function handleCreateReview(draft: ReviewDraft) {
@@ -270,9 +298,12 @@ function App() {
   }
 
   const detailContent: ReactNode = isLoadingMovie ? (
-    <LoadingState label="Cargando la ficha…" />
+    <LoadingState label="Cargando la ficha técnica…" />
   ) : movieError ? (
-    <ErrorState message={movieError} onRetry={() => selectedMovieId !== null && loadMovie(selectedMovieId)} />
+    <ErrorState
+      message={movieError}
+      onRetry={() => selectedMovieId !== null && loadMovie(selectedMovieId, previousView)}
+    />
   ) : movie ? (
     <>
       {reviewNotice && (
@@ -302,12 +333,17 @@ function App() {
 
       <header className="site-header">
         <div className="container header-inner">
-          <p className="brand" aria-label="CineClub">
+          <button
+            type="button"
+            className="brand"
+            onClick={handleGoHome}
+            aria-label="CineClub - Ir al inicio"
+          >
             <span className="brand-mark" aria-hidden="true">
               CC
             </span>
             <span className="brand-text">CineClub</span>
-          </p>
+          </button>
           <div className="header-tagline">
             <span>✦</span> Historias para compartir
           </div>
@@ -315,45 +351,94 @@ function App() {
       </header>
 
       <main className="container main-content">
-        {selectedMovieId === null ? (
+        {/* VISTA 1: HOME (Hero con carrusel + Catálogo Inicial + Metodología al final) */}
+        {view === 'home' && (
           <>
             <HeroCarousel
               searchInputRef={searchInputRef}
               query={query}
               isSearching={isSearching}
               onQueryChange={setQuery}
-              onSearch={handleSearch}
+              onSearch={() => handleSearch()}
               trendingMovies={trendingMovies}
-              onSelectMovie={loadMovie}
+              onSelectMovie={(id) => loadMovie(id, 'home')}
             />
 
-            <StickyShowcase />
-
-            <section className="results-section" aria-labelledby="results-title">
+            {/* Sección Catálogo / Empezá por una búsqueda (subida inmediatamente después del Hero) */}
+            <section className="results-section" aria-labelledby="catalog-home-title">
               <div className="section-heading results-heading">
                 <div>
                   <div className="kicker-badge kicker-badge-mint">
                     <span>✦</span> Catálogo TMDB
                   </div>
-                  <h2 id="results-title">
-                    {hasSearched ? 'Resultados' : 'Películas a tu manera'}
-                  </h2>
+                  <h2 id="catalog-home-title">Películas a tu manera</h2>
                 </div>
-                {movies.length > 0 && <span className="section-count">{movies.length}</span>}
+              </div>
+
+              <EmptyState searched={false} />
+            </section>
+
+            {/* Sección Metodología CineClub (movida hacia abajo, antes del footer) */}
+            <StickyShowcase />
+          </>
+        )}
+
+        {/* VISTA 2: RESULTADOS DE BÚSQUEDA (Dedicada con navegación useState) */}
+        {view === 'search' && (
+          <div className="search-view" aria-label="Vista de resultados de búsqueda">
+            <div className="search-view-header">
+              <div className="search-view-nav">
+                <button
+                  type="button"
+                  className="button button-back"
+                  onClick={handleGoHome}
+                >
+                  <span aria-hidden="true">←</span> Volver al inicio
+                </button>
+                <div className="kicker-badge kicker-badge-yellow">
+                  <span>✦</span> Buscador Activo
+                </div>
+              </div>
+
+              <div className="search-view-bar">
+                <SearchBar
+                  inputRef={searchViewInputRef}
+                  value={query}
+                  loading={isSearching}
+                  onChange={setQuery}
+                  onSubmit={() => handleSearch()}
+                />
+              </div>
+            </div>
+
+            <section className="results-section" aria-labelledby="search-results-title">
+              <div className="section-heading results-heading">
+                <div>
+                  <div className="kicker-badge kicker-badge-mint">
+                    <span>✦</span> Resultados para "{query}"
+                  </div>
+                  <h2 id="search-results-title">Catálogo encontrado</h2>
+                </div>
+                {movies.length > 0 && (
+                  <span className="section-count">{movies.length}</span>
+                )}
               </div>
 
               {isSearching ? (
                 <LoadingState label="Buscando en el catálogo de TMDB…" />
               ) : searchError ? (
-                <ErrorState message={searchError} onRetry={handleSearch} />
+                <ErrorState message={searchError} onRetry={() => handleSearch()} />
               ) : movies.length > 0 ? (
-                <MovieGrid movies={movies} onSelect={loadMovie} />
+                <MovieGrid movies={movies} onSelect={(id) => loadMovie(id, 'search')} />
               ) : (
-                <EmptyState searched={hasSearched} />
+                <EmptyState searched={true} />
               )}
             </section>
-          </>
-        ) : (
+          </div>
+        )}
+
+        {/* VISTA 3: DETALLE DE PELÍCULA Y RESEÑAS */}
+        {view === 'detail' && (
           <section className="detail-section" aria-label="Detalle de película">
             {(isLoadingMovie || movieError) && (
               <button
@@ -362,7 +447,8 @@ function App() {
                 type="button"
                 onClick={handleBack}
               >
-                <span aria-hidden="true">←</span> Volver a resultados
+                <span aria-hidden="true">←</span>{' '}
+                {previousView === 'search' ? 'Volver a resultados' : 'Volver al inicio'}
               </button>
             )}
             {detailContent}
@@ -372,7 +458,7 @@ function App() {
 
       <footer className="site-footer">
         <div className="container footer-inner">
-          <span className="footer-brand">CineClub</span>
+          <span className="footer-brand">CineClubsito</span>
           <span>Datos provistos por TMDB · Reseñas almacenadas en memoria</span>
         </div>
       </footer>

@@ -24,7 +24,7 @@ export function Poster({ path, title, eager = false }: PosterProps) {
         <span className="poster-placeholder-mark" aria-hidden="true">
           ✦
         </span>
-        <span>Poster no disponible</span>
+        <span>Poster no disponible :(</span>
       </div>
     );
   }

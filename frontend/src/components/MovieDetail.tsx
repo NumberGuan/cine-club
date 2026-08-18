@@ -100,7 +100,7 @@ export function MovieDetail({
         <div className="section-heading">
           <div>
             <div className="kicker-badge kicker-badge-mint">
-              <span>✦</span> La conversación
+              <span>✦</span> Foro
             </div>
             <h2 id="reviews-title">Reseñas</h2>
           </div>

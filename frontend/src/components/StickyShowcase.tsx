@@ -13,25 +13,25 @@ interface ShowcasePillar {
 const PILLARS: ShowcasePillar[] = [
   {
     number: '01',
-    tag: 'Catálogo Global',
+    tag: 'Backend',
     tagColor: 'yellow',
-    title: 'Explorá sin límites',
+    title: 'Node.js + Express',
     description:
       'Conectamos con la base de datos de TMDB a través de nuestro backend Express para que encuentres desde clásicos de autor hasta estrenos contemporáneos.',
-    stamp: '35MM · TMDB API',
+    stamp: 'TMDB API',
   },
   {
     number: '02',
-    tag: 'Ficha Editorial',
+    tag: 'Frontend',
     tagColor: 'mint',
-    title: 'Detalles que importan',
+    title: 'React',
     description:
       'Afiches de alta fidelidad, año de lanzamiento, géneros curados, duración exacta y el promedio en tiempo real de toda la comunidad cinéfila.',
     stamp: 'CINEMA SCORE · 5★',
   },
   {
     number: '03',
-    tag: 'Comunidad Viva',
+    tag: 'Evaluación',
     tagColor: 'coral',
     title: 'Tu crítica cuenta',
     description:
@@ -59,7 +59,7 @@ export function StickyShowcase() {
       aria-label="Presentación del club"
     >
       <div className="kicker-badge kicker-badge-yellow">
-        <span>✦</span> Metodología CineClub
+        <span>✦</span> Parcialito
       </div>
 
       <motion.div
@@ -78,7 +78,7 @@ export function StickyShowcase() {
             <span className="showcase-dot green" />
           </div>
           <span className="showcase-title-bar">
-            CineClub · Experiencia Cinematográfica Full Stack
+            Parcial de Desarrollo de Aplicacones Web · 2026
           </span>
           <span className="showcase-status-badge" aria-hidden="true">
             ● EN VIVO

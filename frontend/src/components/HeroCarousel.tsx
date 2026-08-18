@@ -52,7 +52,7 @@ export function HeroCarousel({
 
     timerRef.current = window.setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % trendingMovies.length);
-    }, 6000);
+    }, 4000);
 
     return () => {
       if (timerRef.current !== null) {
@@ -99,14 +99,14 @@ export function HeroCarousel({
         {/* Left Column: Search Hero compacted & aligned left */}
         <div className="hero-left">
           <div className="kicker-badge kicker-badge-yellow">
-            <span>✦</span> Buscador de Cine
+            <span>✦</span> Buscador
           </div>
           <h1 id="search-title" className="hero-title">
-            Buscá algo que<br />
-            <em>te mueva.</em>
+            Busca en<br />
+            <em>CineClubsito</em>
           </h1>
           <p className="hero-description">
-            Explorá películas del catálogo global de TMDB, conocé sus historias y compartí tu reseña con la comunidad cinéfila.
+            Explorá películas del catálogo global de TMDB, y compartí tu reseña con la comunidad.
           </p>
           <SearchBar
             inputRef={searchInputRef}

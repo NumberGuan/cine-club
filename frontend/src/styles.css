@@ -408,15 +408,15 @@ textarea:disabled {
 .hero-wrapper {
   position: relative;
   margin: 32px 0 48px;
-  padding: 44px 32px 40px;
+  padding: 36px 28px;
   border: var(--border-heavy);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-hard-xl);
   overflow: hidden;
-  background-color: var(--color-bg);
+  background-color: #161616;
 }
 
-/* Background image con opacidad vertical progresiva */
+/* Background image con nitidez y presencia */
 .hero-backdrop {
   position: absolute;
   inset: 0;
@@ -424,23 +424,23 @@ textarea:disabled {
   background-position: center 25%;
   z-index: 0;
   transition: background-image 500ms ease-in-out;
+  opacity: 0.88;
 }
 
 /* 
-  Gradiente vertical:
-  - Opacidad alta en la parte inferior (se funde con el fondo del hero)
-  - Hacia arriba verticalmente el background se ve con mucha más claridad
+  Gradiente vertical sutil:
+  - Sin velo blanco pesado que tape la foto
+  - Mantiene la claridad y riqueza visual de la imagen
 */
 .hero-backdrop-gradient {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(247, 243, 235, 1) 0%,
-    rgba(247, 243, 235, 0.95) 25%,
-    rgba(247, 243, 235, 0.78) 60%,
-    rgba(247, 243, 235, 0.42) 85%,
-    rgba(247, 243, 235, 0.12) 100%
+    rgba(18, 18, 18, 0.70) 0%,
+    rgba(18, 18, 18, 0.30) 45%,
+    rgba(0, 0, 0, 0.08) 80%,
+    rgba(0, 0, 0, 0.02) 100%
   );
   pointer-events: none;
 }
@@ -450,23 +450,28 @@ textarea:disabled {
   z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.95fr);
-  gap: clamp(24px, 4vw, 44px);
-  align-items: center;
+  gap: clamp(24px, 4vw, 40px);
+  align-items: stretch;
 }
 
 .hero-left {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  background-color: var(--color-bg);
+  border: var(--border-heavy);
+  border-radius: var(--radius-md);
+  padding: 26px 22px;
+  box-shadow: var(--shadow-hard-lg);
 }
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
   font-weight: 900;
   line-height: 1.08;
   letter-spacing: -0.02em;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   color: var(--color-ink);
 }
 
@@ -847,10 +852,40 @@ textarea:disabled {
 }
 
 /* --------------------------------------------------------------------------
+   Vista Dedicada de Búsqueda y Resultados (Navegación useState)
+   -------------------------------------------------------------------------- */
+.search-view {
+  padding: 24px 0 60px;
+}
+
+.search-view-header {
+  background-color: var(--color-surface);
+  border: var(--border-heavy);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-hard-lg);
+  margin-bottom: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.search-view-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.search-view-bar {
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
    Resultados y Grilla de Películas
    -------------------------------------------------------------------------- */
 .results-section {
-  padding: 30px 0 60px;
+  padding: 10px 0 40px;
 }
 
 .section-heading {
