@@ -4,7 +4,7 @@ CineClub es una plataforma web full stack donde los usuarios pueden buscar pelí
 
 ---
 
-## 🏛️ Arquitectura y Flujo de Datos
+## Arquitectura y Flujo de Datos
 
 ```text
 ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
@@ -22,7 +22,7 @@ CineClub es una plataforma web full stack donde los usuarios pueden buscar pelí
 
 ---
 
-## 🚀 Requisitos Previos
+## Requisitos Previos
 
 - **Node.js**: v20.x o superior
 - **npm**: v10.x o superior
@@ -33,7 +33,7 @@ CineClub es una plataforma web full stack donde los usuarios pueden buscar pelí
 
 ---
 
-## 🛠️ Instalación y Puesta en Marcha
+## Instalación y Puesta en Marcha
 
 ### 1. Backend (Express + Node.js)
 
@@ -97,7 +97,7 @@ CineClub es una plataforma web full stack donde los usuarios pueden buscar pelí
 
 ---
 
-## 📡 Endpoints del Backend
+## Endpoints del Backend
 
 | Método | Ruta | Descripción | Respuestas |
 | :--- | :--- | :--- | :--- |
@@ -109,7 +109,7 @@ CineClub es una plataforma web full stack donde los usuarios pueden buscar pelí
 
 ---
 
-## 🧩 Componentes del Frontend
+## Componentes del Frontend
 
 El frontend está estructurado en componentes modulares con responsabilidades claras:
 
@@ -125,7 +125,7 @@ El frontend está estructurado en componentes modulares con responsabilidades cl
 
 ---
 
-## 🧪 Verificación y Scripts
+## Verificación y Scripts
 
 - **Backend Typecheck:** `cd backend && npm run typecheck`
 - **Backend Build:** `cd backend && npm run build`
