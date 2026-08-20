@@ -34,7 +34,7 @@ export function SearchBar({
             type="search"
             value={value}
             onChange={(event) => onChange(event.target.value)}
-            placeholder="Ej. El badrino, Pulp Fiction"
+            placeholder="Ej. El Padrino, Pulp Fiction, Inception"
             maxLength={120}
             autoComplete="off"
             enterKeyHint="search"

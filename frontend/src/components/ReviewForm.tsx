@@ -61,7 +61,7 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
       <div className="form-heading">
         <div>
           <div className="kicker-badge kicker-badge-yellow">
-            <span>✦</span> Reseñubi
+            <span>✦</span> Nueva Reseña
           </div>
           <h3>Dejá tu reseña</h3>
         </div>
@@ -92,11 +92,11 @@ export function ReviewForm({ onSubmit }: ReviewFormProps) {
             disabled={isSubmitting}
           >
             <option value="">Elegí del 1 al 5</option>
-            <option value="5">5 · CINE</option>
-            <option value="4">4 · Buenasa</option>
-            <option value="3">3 · Esta bien</option>
-            <option value="2">2 · Floja</option>
-            <option value="1">1 · Mala</option>
+            <option value="5">5 ★ · Excelente</option>
+            <option value="4">4 ★ · Muy buena</option>
+            <option value="3">3 ★ · Buena</option>
+            <option value="2">2 ★ · Regular</option>
+            <option value="1">1 ★ · Mala</option>
           </select>
         </div>
 

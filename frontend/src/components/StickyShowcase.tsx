@@ -59,7 +59,7 @@ export function StickyShowcase() {
       aria-label="Presentación del club"
     >
       <div className="kicker-badge kicker-badge-yellow">
-        <span>✦</span> Parcialito
+        <span>✦</span> Arquitectura
       </div>
 
       <motion.div
@@ -78,7 +78,7 @@ export function StickyShowcase() {
             <span className="showcase-dot green" />
           </div>
           <span className="showcase-title-bar">
-            Parcial de Desarrollo de Aplicacones Web · 2026
+            Desarrollo de Aplicaciones Web Full Stack · CineClub
           </span>
           <span className="showcase-status-badge" aria-hidden="true">
             ● EN VIVO

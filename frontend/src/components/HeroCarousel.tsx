@@ -103,7 +103,7 @@ export function HeroCarousel({
           </div>
           <h1 id="search-title" className="hero-title">
             Busca en<br />
-            <em>CineClubsito</em>
+            <em>CineClub</em>
           </h1>
           <p className="hero-description">
             Explorá películas del catálogo global de TMDB, y compartí tu reseña con la comunidad.

@@ -458,7 +458,7 @@ function App() {
 
       <footer className="site-footer">
         <div className="container footer-inner">
-          <span className="footer-brand">CineClubsito</span>
+          <span className="footer-brand">CineClub</span>
           <span>Datos provistos por TMDB · Reseñas almacenadas en memoria</span>
         </div>
       </footer>
